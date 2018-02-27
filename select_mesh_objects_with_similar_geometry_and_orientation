@@ -1,5 +1,5 @@
 '''
-This script deselects objects that have different geometry than the active object
+This script deselects objects that have diffenrent average normal of faces than the active object
 The purpose of this script is to deal with large amounts of duplicate objects
 
 '''
