@@ -1,5 +1,5 @@
 '''
-This script deselects objects that have diffenrent average normal of faces than the active object
+This script deselects mesh objects that have different faces normal average than the active object's faces normal average
 The purpose of this script is to deal with large amounts of duplicate objects
 
 '''
@@ -10,28 +10,34 @@ from math import degrees
 act = bpy.context.active_object
 sel = bpy.context.selected_objects
 margin = Vector((0.0001,0.0001,0.0001))
+print("NEW")
+print (margin)
 
 if bpy.context.object.mode == 'EDIT':
     bpy.ops.object.mode_set(mode = 'OBJECT')
-    
+   
 def get_faces_normals(obj):
+    counter=0
     bm=bmesh.new()
     bm.from_mesh(obj.data)
     face_normal=Vector((0.0,0.0,0.0))
     for face in bm.faces:
         face.select=True
         face_normal+=face.normal
+        counter+=1
     face_normal = face_normal/len(bm.faces)
-    return face_normal
-
-act_normals = get_faces_normals(act)
-print("active object ",act_normals+margin)
+    return (face_normal,counter)
+        
+act_normals = get_faces_normals(act)[0]
+act_faces = get_faces_normals(act)[1]
 
 for i in sel:
     if i != act:
-        norm = get_faces_normals(i)
-        print("   selected",norm)
+        norm = get_faces_normals(i)[0]
+        faces = get_faces_normals(i)[1]
         if (norm[0] < act_normals[0]-margin[0]) or (norm[0] > act_normals[0]+margin[0]):
+            i.select = False
+        if faces != act_faces:
             i.select = False
     else:
         continue
